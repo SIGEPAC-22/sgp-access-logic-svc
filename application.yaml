@@ -1,0 +1,16 @@
+server:
+  port: 90
+
+datasource:
+  host: "localhost:3306"
+  user: "root"
+  pass: "12345"
+  dbname: "sgp_access_info_svc"
+
+paths:
+  getDataAuthLogin: "/v1/sgp-info-svc/getDataAuthLogin"
+
+app-properties:
+  getComorbidity:
+    idStatusActive: 1
+    idStatusInactive: 2
