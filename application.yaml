@@ -8,7 +8,7 @@ datasource:
   dbname: "sgp_access_info_svc"
 
 paths:
-  getDataAuthLogin: "/v1/sgp-info-svc/getDataAuthLogin"
+  getDataAuthLogin: "/v1/sgp-access-logic-svc/getDataAuthLogin"
 
 app-properties:
   getComorbidity:
