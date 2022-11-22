@@ -11,6 +11,7 @@ paths:
   getDataAuthLogin: "/v1/sgp-access-logic-svc/getDataAuthLogin"
   createPersonalInfo: "/v1/sgp-access-logic-svc/createPersonalInfo"
   updatePersonalInfo: "/v1/sgp-access-logic-svc/updatePersonalInfo"
+  deletePersonalInfo: "/v1/sgp-access-logic-svc/deletePersonalInfo"
 
 app-properties:
   getComorbidity:

@@ -18,6 +18,9 @@ import (
 	handler2 "sgp-access-logic-svc/internal/createPersonalInfo/platform/handler"
 	mysql2 "sgp-access-logic-svc/internal/createPersonalInfo/platform/storage/mysql"
 	service2 "sgp-access-logic-svc/internal/createPersonalInfo/service"
+	handler4 "sgp-access-logic-svc/internal/deletePersonalInfo/platform/handler"
+	mysql4 "sgp-access-logic-svc/internal/deletePersonalInfo/platform/storage/mysql"
+	service4 "sgp-access-logic-svc/internal/deletePersonalInfo/service"
 	handler3 "sgp-access-logic-svc/internal/updatePersonalInfo/platform/handler"
 	mysql3 "sgp-access-logic-svc/internal/updatePersonalInfo/platform/storage/mysql"
 	service3 "sgp-access-logic-svc/internal/updatePersonalInfo/service"
@@ -80,9 +83,18 @@ func Run() {
 	transportUpdatePersonalInfo := handler3.NewUpdatePersonalInfoHandler(config.GetString("paths.updatePersonalInfo"), endpointUpdatePersonalInfo)
 	/////////////////////UPDATE PERSONAL/////////////////////
 
+	/////////////////////DELETE PERSONAL/////////////////////
+	repoDeletePersonalInfo := mysql4.NewDeletePersonalInfoRepository(db, kitlogger)
+	serviceDeletePersonalInfo := service4.NewDeletePersonalInfoService(repoDeletePersonalInfo, kitlogger)
+	endpointDeletePersonalInfo := handler4.MakeDeletePersonalInfoEndpoint(serviceDeletePersonalInfo)
+	endpointDeletePersonalInfo = handler4.DeletePersonalInfoTransportMiddleware(kitlogger)(endpointDeletePersonalInfo)
+	transportDeletePersonalInfo := handler4.NewDeletePersonalInfoHandler(config.GetString("paths.deletePersonalInfo"), endpointDeletePersonalInfo)
+	/////////////////////DELETE PERSONAL/////////////////////
+
 	mux.Handle(config.GetString("paths.getDataAuthLogin"), transportGetDataAuthLogin)
 	mux.Handle(config.GetString("paths.createPersonalInfo"), transportCreatePersonalInfo)
 	mux.Handle(config.GetString("paths.updatePersonalInfo"), transportUpdatePersonalInfo)
+	mux.Handle(config.GetString("paths.deletePersonalInfo"), transportDeletePersonalInfo)
 	mux.Handle("/health", health.NewHandler())
 
 	go func() {
