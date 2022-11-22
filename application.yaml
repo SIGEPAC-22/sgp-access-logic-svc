@@ -1,5 +1,5 @@
 server:
-  port: 90
+  port: 91
 
 datasource:
   host: "localhost:3306"
@@ -9,6 +9,7 @@ datasource:
 
 paths:
   getDataAuthLogin: "/v1/sgp-access-logic-svc/getDataAuthLogin"
+  createPersonalInfo: "/v1/sgp-access-logic-svc/createPersonalInfo"
 
 app-properties:
   getComorbidity:
