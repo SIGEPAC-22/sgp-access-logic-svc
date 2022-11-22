@@ -18,6 +18,9 @@ import (
 	handler2 "sgp-access-logic-svc/internal/createPersonalInfo/platform/handler"
 	mysql2 "sgp-access-logic-svc/internal/createPersonalInfo/platform/storage/mysql"
 	service2 "sgp-access-logic-svc/internal/createPersonalInfo/service"
+	handler3 "sgp-access-logic-svc/internal/updatePersonalInfo/platform/handler"
+	mysql3 "sgp-access-logic-svc/internal/updatePersonalInfo/platform/storage/mysql"
+	service3 "sgp-access-logic-svc/internal/updatePersonalInfo/service"
 	"syscall"
 )
 
@@ -69,8 +72,17 @@ func Run() {
 	transportCreatePersonalInfo := handler2.NewCreatePersonalInfoHandler(config.GetString("paths.createPersonalInfo"), endpointCreatePersonalInfo)
 	/////////////////////GET DATA AUTH LOGIN/////////////////////
 
+	/////////////////////UPDATE PERSONAL/////////////////////
+	repoUpdatePersonalInfo := mysql3.NewUpdatePersonalInfoRepository(db, kitlogger)
+	serviceUpdatePersonalInfo := service3.NewUpdateInfoPatientService(repoUpdatePersonalInfo, kitlogger)
+	endpointUpdatePersonalInfo := handler3.MakeUpdatePersonalInfoEndpoint(serviceUpdatePersonalInfo)
+	endpointUpdatePersonalInfo = handler3.UpdateInfoPatientTransportMiddleware(kitlogger)(endpointUpdatePersonalInfo)
+	transportUpdatePersonalInfo := handler3.NewUpdatePersonalInfoHandler(config.GetString("paths.updatePersonalInfo"), endpointUpdatePersonalInfo)
+	/////////////////////UPDATE PERSONAL/////////////////////
+
 	mux.Handle(config.GetString("paths.getDataAuthLogin"), transportGetDataAuthLogin)
 	mux.Handle(config.GetString("paths.createPersonalInfo"), transportCreatePersonalInfo)
+	mux.Handle(config.GetString("paths.updatePersonalInfo"), transportUpdatePersonalInfo)
 	mux.Handle("/health", health.NewHandler())
 
 	go func() {
