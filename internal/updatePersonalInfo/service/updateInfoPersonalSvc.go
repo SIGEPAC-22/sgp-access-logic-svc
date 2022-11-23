@@ -23,6 +23,19 @@ func (u UpdateInfoPatientService) UpdatePersonalInfoSvc(ctx context.Context, Id 
 
 	idConverter, _ := strconv.Atoi(Id)
 
+	selectRespDB, errSelect := u.repoDB.SelectInfoPersonalRepo(ctx, idConverter)
+	if errSelect != nil {
+
+	}
+
+	if documentType == "" {
+		documentType = strconv.FormatInt(int64(selectRespDB.DocumentType), 10)
+	}
+
+	if typeUser == "" {
+		typeUser = strconv.FormatInt(int64(selectRespDB.TypeUser), 10)
+	}
+
 	idDocumentType, _ := strconv.Atoi(documentType)
 
 	idTypeUser, _ := strconv.Atoi(typeUser)

@@ -5,6 +5,7 @@ import (
 )
 
 type Repository interface {
+	SelectInfoPersonalRepo(ctx context.Context, id int) (SelectPersonalInfoResponse, error)
 	UpdatePersonalInfoRepo(ctx context.Context, Id int, firstName string, secondName string, lastFirstName string, lastSecondName string, documentType int, documentNumber string, user string, password string, typeUser int) (bool, error)
 }
 
@@ -14,9 +15,7 @@ type Service interface {
 
 type SelectPersonalInfoResponse struct {
 	DocumentType int `json:"documentType"`
-	Department   int `json:"department"`
-	Foreign      int `json:"foreign"`
-	Pregnant     int `json:"pregnant"`
+	TypeUser     int `json:"typeUser"`
 }
 
 type UpdatePersonalInfoRequest struct {
