@@ -1,0 +1,19 @@
+server:
+  port: 90
+
+datasource:
+  host: "sgp-access-info-svc.csntzsasnlad.us-east-1.rds.amazonaws.com:3306"
+  user: "sgpaccessinfosvc"
+  pass: "test1234"
+  dbname: "sgp_access_info_svc"
+
+paths:
+  getDataAuthLogin: "/v1/sgp-access-logic-svc/getDataAuthLogin"
+  createPersonalInfo: "/v1/sgp-access-logic-svc/createPersonalInfo"
+  updatePersonalInfo: "/v1/sgp-access-logic-svc/updatePersonalInfo"
+  deletePersonalInfo: "/v1/sgp-access-logic-svc/deletePersonalInfo"
+
+app-properties:
+  getComorbidity:
+    idStatusActive: 1
+    idStatusInactive: 2
