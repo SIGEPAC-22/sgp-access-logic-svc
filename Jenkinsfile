@@ -1,8 +1,7 @@
 pipeline {
   agent any
   environment {
-    name_final = "sgp-access-info-svc"
-    DB_CREDS = credentials('db-creds')
+    name_final = "sgp-access-logic-svc"
   }
   stages {
     stage('Docker Build') {
@@ -50,28 +49,6 @@ pipeline {
         sh 'echo SonarQube'
       }
     }
-    stage('RUN DB DEV') {
-      agent {
-        label 'dev'
-      }
-      when {
-        anyOf {
-          branch 'sgp*'
-          branch 'sprint-*'
-          branch 'master'
-        }
-      }
-      steps {
-        script {
-          sh '''
-          docker run --rm flyway/flyway:8.5.1 version
-          docker run --rm -v $WORKSPACE/sql:/flyway/sql -v $WORKSPACE/sql:/flyway/conf flyway/flyway:8.5.1 -user=$DB_CREDS_USR -password=$DB_CREDS_PSW migrate
-          docker run --rm -v $WORKSPACE/sql:/flyway/sql -v $WORKSPACE/sql:/flyway/conf flyway/flyway:8.5.1 -user=$DB_CREDS_USR -password=$DB_CREDS_PSW validate
-          docker run --rm -v $WORKSPACE/sql:/flyway/sql -v $WORKSPACE/sql:/flyway/conf flyway/flyway:8.5.1 -user=$DB_CREDS_USR -password=$DB_CREDS_PSW info
-	  '''
-        }
-      }
-    }
     stage('Deploy to DEV') {
       agent {
         label 'dev'
@@ -86,7 +63,7 @@ pipeline {
       steps {
         script {
           sh '''
-          docker run -dt -p 30002:90 --name ${name_final} ${name_final}
+          docker run -dt -p 30004:90 --name ${name_final} ${name_final}
           docker system prune -f
 	  '''
         }
@@ -104,28 +81,7 @@ pipeline {
         }
       }
       steps {
-        echo 'SonarQube'
-      }
-    }
-    stage('RUN DB QA') {
-      agent {
-        label 'qa'
-      }
-      when {
-        anyOf {
-          branch 'sprint-*'
-          branch 'master'
-        }
-      }
-      steps {
-        script {
-          sh '''
-          docker run --rm flyway/flyway:8.5.1 version
-          docker run --rm -v $WORKSPACE/sql:/flyway/sql -v $WORKSPACE/sql:/flyway/conf flyway/flyway:8.5.1 -user=$DB_CREDS_USR -password=$DB_CREDS_PSW migrate
-          docker run --rm -v $WORKSPACE/sql:/flyway/sql -v $WORKSPACE/sql:/flyway/conf flyway/flyway:8.5.1 -user=$DB_CREDS_USR -password=$DB_CREDS_PSW validate
-          docker run --rm -v $WORKSPACE/sql:/flyway/sql -v $WORKSPACE/sql:/flyway/conf flyway/flyway:8.5.1 -user=$DB_CREDS_USR -password=$DB_CREDS_PSW info
-	  '''
-        }
+        echo 'Cucumber Tests'
       }
     }
     stage('Deploy to QA') {
@@ -146,13 +102,13 @@ pipeline {
             docker stop ${name_final}
             docker rm -vf ${name_final}
             docker build . -t ${name_final}
-            docker run -dt -p 30002:90 --name ${name_final} ${name_final}
+            docker run -dt -p 30104:90 --name ${name_final} ${name_final}
             docker system prune -f
 	    '''
           } else {
             sh '''
             docker build . -t ${name_final}
-            docker run -dt -p 30002:90 --name ${name_final} ${name_final}
+            docker run -dt -p 30104:90 --name ${name_final} ${name_final}
             docker system prune -f
 	    '''
           }
@@ -170,24 +126,6 @@ pipeline {
         input "Aprobacion Tester QA"
       }
     }
-    stage('RUN DB PRD') {
-      agent {
-        label 'prd'
-      }
-      when {
-          branch 'master'
-      }
-      steps {
-        script {
-          sh '''
-          docker run --rm flyway/flyway:8.5.1 version
-          docker run --rm -v $WORKSPACE/sql:/flyway/sql -v $WORKSPACE/sql:/flyway/conf flyway/flyway:8.5.1 -user=$DB_CREDS_USR -password=$DB_CREDS_PSW migrate
-          docker run --rm -v $WORKSPACE/sql:/flyway/sql -v $WORKSPACE/sql:/flyway/conf flyway/flyway:8.5.1 -user=$DB_CREDS_USR -password=$DB_CREDS_PSW validate
-          docker run --rm -v $WORKSPACE/sql:/flyway/sql -v $WORKSPACE/sql:/flyway/conf flyway/flyway:8.5.1 -user=$DB_CREDS_USR -password=$DB_CREDS_PSW info
-	  '''
-        }
-      }
-    }
     stage('Deploy to PRD') {
       agent {
         label 'prd'
@@ -203,13 +141,13 @@ pipeline {
             docker stop ${name_final}
             docker rm -vf ${name_final}
             docker build . -t ${name_final}
-            docker run -dt -p 30002:90 --name ${name_final} ${name_final}
+            docker run -dt -p 30204:90 --name ${name_final} ${name_final}
             docker system prune -f
 	    '''
           } else {
             sh '''
             docker build . -t ${name_final}
-            docker run -dt -p 30002:90 --name ${name_final} ${name_final}
+            docker run -dt -p 30204:90 --name ${name_final} ${name_final}
             docker system prune -f
 	    '''
           }
