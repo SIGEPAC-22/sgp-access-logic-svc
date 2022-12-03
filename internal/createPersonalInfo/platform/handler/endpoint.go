@@ -9,7 +9,7 @@ import (
 func MakeCreatePersonalInfoEndpoint(c createPersonalInfo.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(CreatePersonalInfoInternalRequest)
-		resp, err := c.CreatePersonalInfoSvc(req.ctx, req.FirstLastName, req.SecondName, req.FirstLastName, req.SecondLastName, req.Sex, req.DateBirth, req.DocumentType, req.DocumentNumber, req.User, req.Password, req.TypeUser)
+		resp, err := c.CreatePersonalInfoSvc(req.ctx, req.FirstName, req.SecondName, req.FirstLastName, req.SecondLastName, req.Sex, req.DateBirth, req.DocumentType, req.DocumentNumber, req.User, req.Password, req.TypeUser)
 		return CreatePersonalInfoInternalResponse{
 			Response: resp,
 			Err:      err,
